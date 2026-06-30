@@ -7,6 +7,13 @@ const client = require("prom-client");
 //start collecting metrics
 client.collectDefaultMetrics();
 
+//create custom metrics
+const httpRequestsTotal = new client.Counter({
+    name: "http_requests_total",
+    help: "Total number of HTTP requests"
+});
+
+
 // create app
 const app = express();
 
@@ -25,7 +32,8 @@ dotenv.config();
 
 //route
 app.get("/", (req, res) => {
-        res.send('Hello World!');
+     httpRequestsTotal.inc();
+     res.send('Hello World!');
 });
 
 //secret route
@@ -51,6 +59,7 @@ app.get("/secret", (req,res) => {
 
 
 	if (username === process.env.USERNAME && password === process.env.PASSWORD) {
+                httpRequestsTotal.inc();
 		return res.send(process.env.SECRET_MESSAGE);
 }
 		else {
