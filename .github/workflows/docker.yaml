@@ -35,7 +35,7 @@ jobs:
             sudo docker pull izharn007/deploy-dockerized-node:latest
             sudo docker stop deploy-dockerized-node || true
             sudo docker rm deploy-dockerized-node || true
-            sudo docker run -d --name deploy-dockerized-node -p 80:3000 \
+            sudo docker run -d --network monitoring --name deploy-dockerized-node -p 80:3000 \
               -e USERNAME="${{ secrets.NODE_USERNAME }}" \
               -e PASSWORD="${{ secrets.NODE_PASSWORD }}" \
               -e SECRET_MESSAGE="${{ secrets.NODE_SECRET_MESSAGE }}" \
