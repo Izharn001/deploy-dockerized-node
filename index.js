@@ -1,17 +1,27 @@
 // import express
 const express = require("express");
 
+//import prom-client
+const client = require("prom-client");
+
+//start collecting metrics
+client.collectDefaultMetrics();
+
 // create app
 const app = express();
 
+//metrics route
+app.get("/metrics", async (req,res) => {
+	res.set("Content-Type", client.register.contentType);
+	const metrics = await client.register.metrics();
+	res.send(metrics);
+});
 
 // import dotenv
 const dotenv = require("dotenv");
 
-
 // load dotenv
 dotenv.config();
-
 
 //route
 app.get("/", (req, res) => {
@@ -30,7 +40,6 @@ app.get("/secret", (req,res) => {
 		return res.status(401).send("Authentication required");
 
 }
-
 		//decode BasicAuth
                 const encodedCredentials = authHeader.split(" ")[1];
                 const decodedCredentials = Buffer.from(encodedCredentials, "base64").toString("utf-8");
@@ -57,3 +66,4 @@ app.get("/secret", (req,res) => {
 app.listen(3000, () => { 
         console.log('Example app listening on port 3000!');
 });
+
